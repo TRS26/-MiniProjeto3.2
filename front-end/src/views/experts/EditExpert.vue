@@ -1,50 +1,112 @@
 <template>
   <section class="page-section">
     <b-container>
-      <HeaderPage title="Editar Expert" />
-
-      <!--FORM-->
+      <HeaderPage title="Adicionar Especialista" />
       <b-row>
         <b-col cols="2"></b-col>
-        <b-col cols="8">
-          <form @submit.prevent="update">
+        <b-col>
+          <form @submit.prevent="add">
             <div class="form-group">
               <input
-                v-model="animal.name"
+                v-model="img"
                 type="text"
                 class="form-control form-control-lg"
-                id="txtName"
-                placeholder="escreve nome"
+                placeholder="Imagem do Especialista"
                 required
               />
             </div>
             <div class="form-group">
-              <select id="sltGroup" class="form-control form-control-lg" v-model="animal.group">
+              <input
+                v-model="name"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Nome do Especialista"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                v-model="animal"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Animal"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <select
+                id="sltGroup"
+                class="form-control form-control-lg"
+                v-model="group"
+                required
+              >
                 <option value>-- SELECIONA GRUPO --</option>
-                <option value="15">15 Anos</option>
-                <option value="10">10 Anos</option>
-                <option value="5">5 anos</option>
+                <option value="anfibio">ANFÍBIO</option>
+                <option value="ave">AVE</option>
+                <option value="mamifero">MAMÍFERO</option>
+                <option value="peixe">PEIXE</option>
+                <option value="reptil">RÉPTIL</option>
               </select>
             </div>
             <div class="form-group">
-              <textarea
-                id="txtDescription"
+              <input
+                v-model="years_experted"
+                type="number"
                 class="form-control form-control-lg"
-                placeholder="escreve descrição"
-                cols="30"
-                rows="10"
-                v-model="animal.description"
+                placeholder="Anos de Especialista"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <textarea
+                v-model="description"
+                class="form-control form-control-lg"
+                placeholder="Descrição"
+                rows="5"
                 required
               ></textarea>
             </div>
-            <button type="button" class="btn btn-outline-success btn-lg mr-2" @click="removeComments()">
-              <i class="fas fa-edit"></i> REMOVER COMENTÁRIOS
-            </button>
+            <div class="form-group">
+              <input
+                v-model="location.city"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Cidade"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                v-model="location.country"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="País"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                v-model="value"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Valor por ano"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                v-model="contact"
+                type="text"
+                class="form-control form-control-lg"
+                placeholder="Valor por hora"
+                required
+              />
+            </div>
             <button type="submit" class="btn btn-outline-success btn-lg mr-2">
-              <i class="fas fa-edit"></i> ATUALIZAR
+              <i class="fas fa-plus-square"></i> ADICIONAR
             </button>
             <router-link
-              :to="{name: 'listExperts'}"
+              :to="{ name: 'listExperts' }"
               tag="button"
               class="btn btn-outline-danger btn-lg"
             >
@@ -59,50 +121,47 @@
 </template>
 
 <script>
-import { EDIT_ANIMAL } from "@/store/animals/animal.constants";
+import { ADD_EXPERT } from "@/store/experts/expert.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import router from "@/router";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "EditAnimal",
+  name: "AddExpert",
   components: {
     HeaderPage
   },
   data: () => {
     return {
-      animal: {}
+      img: "",
+      name: "",
+      animal: "",
+      group: "",
+      years_experted: 0,
+      description: "",
+      value: 0.0,
+      contact: "",
+      location: {
+        city: "",
+        country: ""
+      }
     };
   },
   computed: {
-    ...mapGetters("animal", ["getAnimalsById", "getMessage"])
+    ...mapGetters("expert", ["getMessage"])
   },
   methods: {
-    removeComments() {
-      this.animal.comments.length = 0
-      this.$alert("Comentários removidos, clique em atualizar!", "Comentários!", "success");
-    },
-    update() {
-      this.$store.dispatch(`animal/${EDIT_ANIMAL}`, this.$data.animal).then(
+    add() {
+      this.$store.dispatch(`expert/${ADD_EXPERT}`, this.$data).then(
         () => {
-          this.$alert(this.getMessage, "Animal atualizado!", "success");
-          router.push({ name: "listAnimals" });
+          this.$alert(this.getMessage, "Especialista adicionado!", "success");
+          router.push({ name: "listExperts" });
         },
         err => {
           this.$alert(`${err.message}`, "Erro", "error");
         }
       );
     }
-  },
-  created() {
-    this.animal = this.getAnimalsById(this.$route.params.animalId);
   }
 };
 </script>
-
-<style scoped>
-.center_div {
-  margin: 0 auto;
-  width: 80%;
-}
-</style>

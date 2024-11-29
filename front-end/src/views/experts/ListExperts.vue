@@ -2,65 +2,90 @@
   <section class="page-section">
     <b-container>
       <HeaderPage title="Gestão de Experts" />
-      <!--MENU TOPO-->
+
       <b-row class="mb-4">
-        <b-col cols="2"></b-col>
         <b-col>
           <router-link
-            :to="{name:'addExpert'}"
+            :to="{ name: 'addExpert' }"
             tag="button"
             class="btn btn-outline-success mr-2 mt-2"
+            ><i class="fas fa-plus-square"></i> ADICIONAR
+            ESPECIALISTA</router-link
           >
-            <i class="fas fa-plus-square"></i> ADICIONAR EXPERT
-          </router-link>
-          <router-link :to="{name:'admin'}" tag="button" class="btn btn-outline-info mr-2 mt-2">
-            <i class="fas fa-bars"></i> MENU PRINCIPAL
-          </router-link>
+          <router-link
+            :to="{ name: 'admin' }"
+            tag="button"
+            class="btn btn-outline-info mr-2 mt-2"
+            ><i class="fas fa-bars"></i> MENU PRINCIPAL</router-link
+          >
         </b-col>
-        <b-col cols="2"></b-col>
       </b-row>
 
-      <!--TABLE-->
       <b-row>
-        <b-col cols="2"></b-col>
         <b-col>
           <table class="table table-striped">
             <thead class="thead-dark">
               <tr>
                 <th scope="col">
-                  NOME
-                  <i class="fas fa-arrow-up" v-if="sortType===1" @click="sort()"></i>
+                  IMAGEM
+                  <i
+                    class="fas fa-arrow-up"
+                    v-if="sortType === 1"
+                    @click="sort()"
+                  ></i>
                   <i class="fas fa-arrow-down" v-else @click="sort()"></i>
                 </th>
-                <th scope="col">ANOS</th>
-                <th scope="col">ID</th>
+                <th scope="col">
+                  NOME
+                  <i
+                    class="fas fa-arrow-up"
+                    v-if="sortType === 1"
+                    @click="sort()"
+                  ></i>
+                  <i class="fas fa-arrow-down" v-else @click="sort()"></i>
+                </th>
+                <th scope="col">ANIMAL</th>
+                <th scope="col">TIPO</th>
+                <th scope="col">VALOR</th>
+                <th scope="col">CONTACTO</th>
                 <th scope="col">AÇÕES</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="expert of animals" :key="expert._id">
-                <td class="pt-4">{{expert.name}}</td>
-                <td class="pt-4">{{expert.group}}</td>
-                <td class="pt-4">{{expert.level}}</td>
+              <tr v-for="expert of experts" :key="expert._id">
+                <td class="pt-4">
+                  <img
+                    alt=""
+                    style="width: 80px"
+                    src="https://img.favpng.com/25/7/23/computer-icons-user-profile-avatar-image-png-favpng-LFqDyLRhe3PBXM0sx2LufsGFU.jpg"
+                  />
+                </td>
+                <td class="pt-4">{{ expert.name }}</td>
+                <td class="pt-4">{{ expert.animal }}</td>
+                <td class="pt-4">{{ expert.group }}</td>
+                <td class="pt-4">{{ expert.value }}</td>
+                <td class="pt-4">{{ expert.contact }}</td>
                 <td>
                   <router-link
-                    :to="{name:'editExpert', params:{animalId: expert._id}}"
+                    :to="{
+                      name: 'editExpert',
+                      params: { expertId: expert._id }
+                    }"
                     tag="button"
-                    class="btn btn-outline-success mr-2 mt-2"
+                    class="btn btn-outline-warning mr-2"
+                    ><i class="fas fa-edit"></i> EDITAR</router-link
                   >
-                    <i class="fas fa-edit"></i> EDITAR
-                  </router-link>
                   <button
                     @click="viewExpert(expert._id)"
                     type="button"
-                    class="btn btn-outline-success mr-2 mt-2"
+                    class="btn btn-outline-success mr-2"
                   >
                     <i class="fas fa-search"></i> VER
                   </button>
                   <button
                     @click="removeExpert(expert._id)"
                     type="button"
-                    class="btn btn-outline-danger mr-2 mt-2"
+                    class="btn btn-outline-danger mr-2 "
                   >
                     <i class="fas fa-trash-alt"></i> REMOVER
                   </button>
@@ -69,36 +94,35 @@
             </tbody>
           </table>
         </b-col>
-        <b-col cols="2"></b-col>
       </b-row>
     </b-container>
   </section>
 </template>
 
 <script>
-import { FETCH_ANIMALS, REMOVE_ANIMAL } from "@/store/animals/animal.constants";
+import { FETCH_EXPERTS, REMOVE_EXPERT } from "@/store/experts/expert.constants";
 import HeaderPage from "@/components/HeaderPage.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "ManageAnimals",
+  name: "ManageExperts",
   components: {
     HeaderPage
   },
   data: function() {
     return {
-      animals: [],
+      experts: [],
       sortType: 1
     };
   },
   computed: {
-    ...mapGetters("animal", ["getAnimals", "getMessage"])
+    ...mapGetters("expert", ["getExperts", "getMessage"])
   },
   methods: {
-    fetchAnimals() {
-      this.$store.dispatch(`animal/${FETCH_ANIMALS}`).then(
+    fetchExperts() {
+      this.$store.dispatch(`expert/${FETCH_EXPERTS}`).then(
         () => {
-          this.animals = this.getAnimals;
+          this.experts = this.getExperts;
         },
         err => {
           this.$alert(`${err.message}`, "Erro", "error");
@@ -106,52 +130,50 @@ export default {
       );
     },
     sort() {
-      this.animals.sort(this.compareNames);
+      this.experts.sort(this.compareNames);
       this.sortType *= -1;
     },
-    compareNames(u1, u2) {
-      if (u1.name > u2.name) return 1 * this.sortType;
-      else if (u1.name < u2.name) return -1 * this.sortType;
+    compareNames(s1, s2) {
+      if (s1.name > s2.name) return 1 * this.sortType;
+      else if (s1.name < s2.name) return -1 * this.sortType;
       else return 0;
     },
 
-    viewAnimal(id) {
-      const animal = this.animals.find(animal => animal._id === id);
-
+    viewExpert(id) {
+      const expert = this.experts.find(expert => expert._id === id);
       this.$fire({
-        title: animal.name,
-        html: this.generateTemplate(animal),
-        imageUrl: animal.links[0].url,
-        imageWidth: 400,
-        imageHeight: 200,
-        imageAlt: "Imagem desconhecida"
+        title: expert.name,
+        html: this.generateTemplate(expert)
       });
     },
 
-    generateTemplate(animal) {
-      let response = `
-          <h4>Grupo:</b> ${animal.group}</h4>
-          <h5>(nível:</b> ${animal.level})</h5>
-          <p>${animal.description}</p> 
-          <p>Elementos multimédia:
-        `;
-      for (const link of animal.links) {
-        response += ` <a href='${link.url}' target='_blank'>${link.types}</a>`;
-      }
-      response += `</p><p>Comentários: ${animal.comments.length} Avaliações: ${animal.evaluation.length}</p> `;
-      return response;
+    generateTemplate(expert) {
+      return `
+        <p>
+          <img style="" class="w-50"  src="${expert.img}" alt="" srcset=""> <br>
+          <b>Nome:</b> ${expert.name} <br>
+          <b>Animal:</b> ${expert.animal} <br>
+          <b>Grupo:</b> ${expert.group} <br>
+          <b>Descrição:</b> ${expert.description}<br>
+          <b>Anos de Especialista:</b> ${expert.years_experted} <br>
+          <b>Localização:</b> ${expert.location.city} / ${expert.location.country} <br>
+          <b>Valor por hora:</b> ${expert.value} € <br>
+          <b>Localização:</b> ${expert.contact}
+        </p>
+      `;
     },
-    removeAnimal(id) {
+
+    removeExpert(id) {
       this.$confirm(
         "Se sim, clique em OK",
-        "Deseja mesmo remover o animal?",
+        "Deseja mesmo remover o Especialista?",
         "warning",
         { confirmButtonText: "OK", cancelButtonText: "Cancelar" }
       ).then(
         () => {
-          this.$store.dispatch(`animal/${REMOVE_ANIMAL}`, id).then(() => {
-            this.$alert(this.getMessage, "Animal removido!", "success");
-            this.fetchAnimals();
+          this.$store.dispatch(`expert/${REMOVE_EXPERT}`, id).then(() => {
+            this.$alert(this.getMessage, "Especialista removido!", "success");
+            this.fetchExperts();
           });
         },
         () => {
@@ -161,7 +183,7 @@ export default {
     }
   },
   created() {
-    this.fetchAnimals();
+    this.fetchExperts();
   }
 };
 </script>
